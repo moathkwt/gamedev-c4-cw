@@ -9,6 +9,9 @@ public class playerscript : MonoBehaviour
     AudioSource rocketAudiosource;
 
     [SerializeField] AudioClip mainEngine;
+    [SerializeField] float rotateSpeed = 5f;
+    [SerializeField] float thrustSpeed = 5f;
+
 
 
     // Start is called before the first frame update
@@ -31,7 +34,7 @@ public class playerscript : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.Space))
         {
-            rocketRB.AddRelativeForce(Vector3.up * 15);
+            rocketRB.AddRelativeForce(Vector3.up * thrustSpeed );
             if (!rocketAudioSource.isPlaying)
             {
                 rocketAudioSource.PlayOneShot(mainEngine);
@@ -41,7 +44,27 @@ public class playerscript : MonoBehaviour
         {
             rocketAudioSource.Stop();
         }
+
+        
     
+
+    }
+     void OnCollisionEnter(Collision collision)
+    {
+        print (collision.gameObject.tag);
+        switch (collision.gameObject.tag)
+        {
+            case "Friendly":
+                print("No problem");
+                break;
+            case "Finish":
+                print("You win!");
+                break;
+            default:
+                print("you lose !!!");
+                break;
+        }
+
 
     }
     void Rotate()
@@ -49,12 +72,12 @@ public class playerscript : MonoBehaviour
         
         if (Input.GetKey(KeyCode.A))
         {
-            transform.Rotate(Vector3.forward / 2);
+            transform.Rotate(Vector3.forward * rotateSpeed);
         }
         else
             if (Input.GetKey(KeyCode.D))
         {
-            transform.Rotate(-Vector3.forward / 2);
+            transform.Rotate(-Vector3.forward * rotateSpeed);
         }
         
     }
