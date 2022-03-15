@@ -1,16 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
 
 public class playerscript : MonoBehaviour
 {
     Rigidbody rocketRB;
     private AudioSource rocketAudioSource;
     AudioSource rocketAudiosource;
+    int loadingTime = 1;
+    bool isControlEnabled = true;
 
     [SerializeField] AudioClip mainEngine;
     [SerializeField] float rotateSpeed = 5f;
     [SerializeField] float thrustSpeed = 5f;
+    
+
 
 
 
@@ -25,9 +31,15 @@ public class playerscript : MonoBehaviour
 
     // Update is called once per frame
     void Update()
+
     {
-        Thrust();
-        Rotate();
+        if (isControlEnabled)
+        {
+            Thrust();
+            Rotate();
+
+        }
+        
     }
 
     void Thrust()
@@ -45,8 +57,9 @@ public class playerscript : MonoBehaviour
             rocketAudioSource.Stop();
         }
 
-        
-    
+
+
+
 
     }
      void OnCollisionEnter(Collision collision)
@@ -55,18 +68,43 @@ public class playerscript : MonoBehaviour
         switch (collision.gameObject.tag)
         {
             case "Friendly":
-                print("No problem");
+                
                 break;
             case "Finish":
-                print("You win!");
+                Invoke("LoadNextScene", loadingTime);
+                isControlEnabled = false;
+
+                
                 break;
             default:
-                print("you lose !!!");
+                Invoke("LoadFirstLevel", loadingTime);
+                isControlEnabled = false;
+               
                 break;
         }
 
 
     }
+        void LoadFirstLevel()
+    {
+        SceneManager.LoadScene(0);
+    }
+
+
+
+
+    void LoadNextScene()
+    {
+        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+        int nextSceneIndex = currentSceneIndex + 1;
+        if (nextSceneIndex == SceneManager.sceneCountInBuildSettings)
+        {
+            nextSceneIndex = 0;
+        }
+        SceneManager.LoadScene(nextSceneIndex);
+    }
+
+
     void Rotate()
     {
         
@@ -79,6 +117,7 @@ public class playerscript : MonoBehaviour
         {
             transform.Rotate(-Vector3.forward * rotateSpeed);
         }
+
         
     }
 }
